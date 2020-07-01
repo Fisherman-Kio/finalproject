@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- 부트스트랩 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Webpage Title -->
+    <title>교환일기 | Exchange Diary | KIO</title>
+
+    <!-- Required meta tags
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <script type="text/javascript">
+        function is_long(obj) {
+            let content = $(obj).val();
+            console.log(content);
+            console.log(content.length);
+            if (content.length > 150) {
+                alert('일상 공유는 150자까지 기록할 수 있습니다.');
+                $(obj).val(content.substring(0, 140));
+            }
+        }
+
+        function make_review() {
+            let title = $('#title').val();
+            let author = $('#author').val();
+            let review = $('#review').val();
+
+            if (title == '') {
+                alert('날짜를 입력하자!');
+                $('#title').focus();
+                return;
+            } else if (author == '') {
+                alert('이름 입력해야지!');
+                $('#author').focus();
+                return;
+            } else if (review == '') {
+                alert('일상 공유해줘!');
+                $('#review').focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/reviews",
+                data: { title_give: title, author_give: author, review_give: review },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            $('#orders-box').html('');
+            listing();
+        });
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/reviews",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let reviews = response['reviews'];
+                        for (let i = 0; i < reviews.length; i++) {
+                            make_card(reviews[i]['title'], reviews[i]['author'], reviews[i]['review']);
+                        }
+                    } else {
+                        alert('일상을 받아오지 못했습니다');
+                    }
+                }
+            })
+        }
+
+        function make_card(title, author, review) {
+            let temp_html = `<tr>
+                                <td>${title}</td>
+                                <td>${author}</td>
+                                <td>${review}</td>
+                            </tr>`;
+            $('#orders-box').append(temp_html);
+        }
+    
+    function timer () { 
+
+	 var date = new Date(); 
+
+	 var hour = date.getHours(); 
+
+	 var ampm = ( hour  < 12 || hour == 24 ) ? " A.M." : " P.M."; 
+
+
+	      hour = hour % 12 || 12; 
+
+
+	 var minute = date.getMinutes(); 
+	      minute = ( minute > 9 ) ? minute : "0" + minute; 
+
+	 var second = date.getSeconds(); 
+	      second = ( second > 9 ) ? second : "0" + second; 
+
+	 var millisec = date.getMilliseconds(); 
+	      millisec = ( millisec > 99 ) ? millisec : ( millisec > 9 ) ? "0" + millisec : "00" + millisec; 
+
+
+
+	 var timeString = hour + ":" + minute + ":" + second + ampm; 
+	 // 또는,  var timeString = hour + ":" + minute + ":" + second + ":" + millisec + ampm; 
+
+
+	 var year = date.getFullYear(); 
+	 var month = date.getMonth() + 1; 
+	 var day = date.getDate(); 
+
+
+	 var arrayWeek = [ "Sun. " , "Mon. " , "Tue. " , "Wed. " , "Thur. " , "Fri. " , "Sat. " ]; 
+	 // 또는, var arrayWeek = [ "일. " , "월. " , "화. " , "수. " , "목. " , "금. " , "토. " ]; 
+
+
+	 var week = date.getDay(); 
+	       week = arrayWeek [ week ]; 
+
+
+	 var dateString = year + ". " + month + ". " + day + ". " + week; 
+
+
+	 return  dateString + timeString; 
+} 
+
+var v = new Date().getFullYear(),
+      z = new Date("jan 01, " + v + " 00:00:00").getTime(),
+      x = setInterval(function() {
+    var f = new Date().getTime(),
+          g = z - f,
+          y = g / 864e5,
+          a = Math.floor(g / 864e5),
+         b = Math.floor(g % 864e5 / 36e5),
+          c = Math.floor(g % 36e5 / 6e4),
+          d = Math.floor(g % 6e4 / 1e3),
+          zz = v + 1,
+          aa = new Date("jan 01, " + zz + " 00:00:00").getTime(),
+          bb = aa - f,
+          cc = bb / 864e5,
+          dd = Math.floor(bb / 864e5),
+          ee = Math.floor(bb % 864e5 / 36e5),
+          ff = Math.floor(bb % 36e5 / 6e4),
+          gg = Math.floor(bb % 6e4 / 1e3);
+    if (y <= -1) {
+      document.getElementById("dday").innerText = `${dd}일 ${ee}시간 ${ff}분 ${gg}초`
+    }
+    else {
+      if (0 >= g) {
+        clearInterval(x), document.getElementById("birthday").innerHTML = "Happy Birthday!!", document.getElementById("birthday").classList.add("dday")
+      }
+      else {
+        document.getElementById("dday").innerText = `${a}일 ${b}시간 ${c}분 ${d}초`
+      }
+    }
+ }, 500)
+
+
+
+function openclose() {
+    // id 값 post-box의 display 값이 block 이면
+    if ($('#diary').css('display') == 'block') {
+        // post-box를 가리고
+        $('#diary').hide();
+        $('#btn-posting-box').text('Diary Open');
+    } else {
+        // 아니면 post-box를 펴라
+        $('#diary').show();
+        $('#btn-posting-box').text('Diary Close');
+    }
+}
+
+
+    </script>
+
+    <style type="text/css">
+        p {
+        
+          margin: auto;
+        }
+        
+        .reply {
+           width: 450px;
+           margin: auto;
+        }
+
+        .img {
+            background-image: url('static/3.gif');
+            background-size: cover;
+            background-position: center;
+            width: 550px;
+            height: 300px;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+
+        .birth {
+          margin: auto;
+        }
+
+        .diaryopen {
+           width: 450px;
+           margin: auto;
+           margin-bottom: 20px;
+        }
+
+        .wrap {
+            width: 550px;
+            margin: auto;
+            font-family: 'Do Hyeon', sans-serif;
+        }
+
+        .infoh {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 550px;
+            margin: auto;
+        }
+
+        .user-info {
+            margin: 20px 5px auto 5px;
+        }
+
+        h1,
+        h5 {
+            display: inline;
+        }
+
+        .order {
+            text-align: center;
+        }
+
+        .orders {
+            witdh: 600px;
+            margin-top: 80px;
+        }
+
+        .meta_info {
+            width: 20%;
+        }
+
+        .event {
+          text-align: center;
+          margin-bottom: 50px;
+          witdh: 500px;
+        }
+    </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="https://seupareutakodingkeulreob-peurojegteu--fishermankio.repl.co/">Trend Box</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="https://seupareutakodingkeulreob-peurojegteu--fishermankio.repl.co/#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="https://seupareutakodingkeulreob-peurojegteu--fishermankio.repl.co/#services">News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="https://seupareutakodingkeulreob-peurojegteu--fishermankio.repl.co/#humor">Humor</a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="https://Exchange-Diary--fishermankio.repl.co">Diary</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="https://seupareutakodingkeulreob-peurojegteu--fishermankio.repl.co/#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+    <div class="wrap">
+      
+        <div class="img"></div>
+        <div class="infoh">
+            <h3><span style="color:indianred">W</span><span style="color:blueviolet">e</span><span style="color:orange">l</span><span style="color:deeppink">c</span><span style="color:blue;">o</span><span style="color:chartreuse">m</span><span style="color:gold">e</span>
+
+            <span style="color:violet">t</span><span style="color:cornflowerblue">o</span>
+            
+            <span style="color:sienna">E</span><span style="color:crimson">x</span><span style="color:deepskyblue">c</span><span style="color:indianred">h</span><span style="color:blueviolet">a</span><span style="color:orange">n</span><span style="color:deeppink">g</span><span style="color:blue;">e</span><span style="color:chartreuse"> 
+              
+            D</span><span style="color:gold">i</span><span style="color:violet">a</span><span style="color:cornflowerblue">r</span><span style="color:sienna">y</span><span style="color:crimson">!</span> </h3>
+            <p></p>
+            <p> <span style="color:indianred">코로나</span> <span style="color:blueviolet">백수가</span> <span style="color:orange">만든</span> <span style="color:deeppink">교환일기장</span> </p>
+            <p> <span style="color:blue;">소소한</span> <span style="color:chartreuse">일상을</span> <span style="color:gold">함께</span> <span style="color:violet">나누는</span> <span style="color:cornflowerblue">곳</span> </p>
+            <p><span style="color:sienna">이제</span> <span style="color:crimson">당신</span> <span style="color:deepskyblue">차례입니다.</span></p>
+            <!-- Start of WebFreeCounter Code -->
+<a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gmrannnp&nd=3&style=109" border="0" alt="web counter"></a>
+<!-- End of WebFreeCounter Code -->
+
+<p id="realTimer"></p>
+        </div>
+        <div class="info">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Date</span>
+                </div>
+                <input type="date" class="form-control" id="title"aria-describedby="basic-addon3" placeholder="YYYY.MM.DD">
+
+              
+                
+
+
+<script type="text/javascript">
+
+var tag = document.getElementById( "realTimer" ); 
+
+     tag.innerHTML = timer(); 
+
+setInterval ( function() { tag.innerHTML = timer(); } , 1000 ); 
+
+</script>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Name</span>
+                </div>
+                <input type="text" class="form-control" id="author" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Diary</span>
+                </div>
+                <textarea class="form-control" aria-describedby="basic-addon3" name="bookReview" id="review" cols="30"
+                    rows="5" placeholder="반말로 작성해도 완전 Ok입니다. 내용은 150자까지 입력할 수 있습니다. You can enter up to 150 characters." onkeyup="is_long(this)"></textarea>
+            </div>
+            <div class="order" >
+                <button onclick="make_review()" type="button" class="btn btn-primary">Write</button>
+            </div>
+           
+        </div>
+        <br> 
+        <div class="order">
+         <button onclick="openclose()" id="btn-posting-box"  type="button" class="btn btn-primary">Diary Open</button>
+         </div>
+
+        <div id="diary" style="display:none">
+            <table class="table" >
+                <thead>
+                    <tr>
+                        <th class="meta_info" scope="col">Date</th>
+                        <th class="meta_info" scope="col">Name</th>
+                        <th scope="col">Diary</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-box">
+                    <tr>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br> 
+        <!-- <p class="event">
+          <a href="https://avaricioussaferepo--fishermankio.repl.co/shop" class="btn btn-primary">이벤트 9+1 행사</a>
+          <a href="https://kio-test-page.fishermankio.repl.co/" class="btn btn-primary">TEST Portfolio
+</a>
+        </p>
+
+  <section class="order" id="birthday">
+  <div >기오님의 생일이 <span id="dday"></span> 남았습니다! 선물을 준비해주세요:)<div>
+</section>
+    <div class="progress">
+  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
+    웹사이트 5일차
+  </div> -->
+</div>
+
+
+
+  
+
+
+
+  <br> <br> <br>
+
+
+
+    </div>
+
+
+
+
+</body>
+
+</html>`
